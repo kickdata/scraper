@@ -8,6 +8,21 @@ var outFile = 'projects.txt'
 var startIndex = 0;
 var sleepTime = 4;
 
+if(process.argv[2]) {
+  console.log('OutFile: ' + process.argv[2]);
+  outFile = process.argv[2];
+}
+
+if(process.argv[3]) {
+  console.log('StartIndex: ' + process.argv[3]);
+  startIndex = process.argv[3];
+}
+
+if(process.argv[4]) {
+  console.log('SleepTime: ' + process.argv[4]);
+  sleepTime = process.argv[4];
+}
+
 function generateQueries() {
   var characters = []
   for (var i = 0; i < 26; i ++) {

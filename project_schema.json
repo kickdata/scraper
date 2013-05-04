@@ -1,18 +1,22 @@
 {
-	name: '',
-	owner: '',
-	category: '',
-	location: '',
-	start: '',
-	end: '',
-	last_update: '',
-	money_raised: '',
-	money_goal: '',
-	status: 'running | unsuccessfull | running',
-	backers: [
-		{name: '', location: ''}
+	"name": "",
+	"creator": "",
+	"category": "",
+	"location": "",
+	"start": "",
+	"end": "",
+	"last_update": "done by import script",
+	"pledged": {
+		"goal": "",
+		"percent_raised": "",
+		"pledged": "",
+		"currency": "",
+	},
+	"status": "[{status: live}, {status: 'successful'}]",
+	"backers": [
+		{ "name": "", "location": ""}
 	],
-	pledges: [
-		{ min_money: '', backersCount: '' }
+	"pledges": [
+		{ "pledge": "", "backers_count": "", "unit": "" }
 	]
 }

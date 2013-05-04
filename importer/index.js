@@ -36,7 +36,9 @@ String.prototype.endsWith = function(suffix) {
 };
 
 function getProjectStatus(data) {
-  return JSON.parse($('#moneyraised div[data-evaluation="true"]', data).has('#banner').attr('data-conditions'))
+  return _.map(JSON.parse($('#moneyraised div[data-evaluation="true"]', data).has('#banner').attr('data-conditions')), function(x) {
+    return x.state;
+  });
 }
 
 function getBackers(data) {

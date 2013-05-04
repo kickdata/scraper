@@ -81,6 +81,6 @@ function scrapeProjects(url,handler) {
 console.log("Beginning project scrape at index " + startIndex)
 var queries = generateQueries();
 
-scrapeBase(queries.slice(startIndex),0);
+scrapeBase(queries.slice(startIndex), startIndex);
 
 

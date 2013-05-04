@@ -32,16 +32,25 @@ function addProject(name) {
   }
 }
 
-function scrapeQuery(query,page) {
+function scrapeBase(queries) {
+  var firstQuery = _.first(queries)
+  var restQueries = queries.slice(1)
+  scrapeQuery(firstQuery,1,function() {
+    scrapeBase(restQueries);
+  });
+}
+
+function scrapeQuery(query,page,callback) {
   scrapeProjects(query + "&page=" + page,function(projects) {
     if (projects.length > 0) {
       _.each(projects,function(project) {
         addProject(project)
       });
       sleep.sleep(5);
-      scrapeQuery(query,page+1);
+      scrapeQuery(query,page+1,callback);
     } else {
       console.log("No more projects for query " + query)
+      callback()
     }
   });   
 }  
@@ -59,23 +68,7 @@ function scrapeProjects(url,handler) {
 
 console.log("Generating URLs")
 var queries = generateQueries();
-var query = _.first(queries)
-scrapeQuery(query,1);
 
-var http = require('http');
-
-// Configure our HTTP server to respond with Hello World to all requests.
-var server = http.createServer(function (request, response) {
-  response.writeHead(200, {"Content-Type": "text/plain"});
-  response.end("Hello World\n");
-
-  
-});
-
-// Listen on port 8000, IP defaults to 127.0.0.1
-server.listen(8001);
-
-
-
+scrapeBase(queries);
 
 

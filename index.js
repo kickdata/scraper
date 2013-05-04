@@ -1,10 +1,12 @@
 var request = require('request');
 var sleep = require('sleep');
 var _ = require('underscore');
-var $ = require('jquery')
+var $ = require('jquery');
+var fs = require('fs');
 
-var maxPage = 1; // The maximum page number to crawl
-var projects = {};
+var outFile = 'projects.txt'
+var startIndex = 0;
+var sleepTime = 4;
 
 function generateQueries() {
   var characters = []
@@ -22,21 +24,16 @@ function generateQueries() {
   })  
 }
 
-var projects = {}
-function addProject(name) {
-  if (projects[name] == undefined) {
-    console.log("  Project " + name + " addded")
-    projects[name] = true
-  } else {
-    console.log("  Project " + name + " already known")
-  }
+function addProject(path) {
+  fs.appendFile(outFile,'http://www.kickstarter.com/' + path + "\n")
 }
 
-function scrapeBase(queries) {
+function scrapeBase(queries,i) {
+  console.log("Scraping sequence " + i)
   var firstQuery = _.first(queries)
   var restQueries = queries.slice(1)
   scrapeQuery(firstQuery,1,function() {
-    scrapeBase(restQueries);
+    scrapeBase(restQueries,i+1);
   });
 }
 
@@ -46,7 +43,7 @@ function scrapeQuery(query,page,callback) {
       _.each(projects,function(project) {
         addProject(project)
       });
-      sleep.sleep(5);
+      sleep.sleep(sleepTime);
       scrapeQuery(query,page+1,callback);
     } else {
       console.log("No more projects for query " + query)
@@ -66,9 +63,9 @@ function scrapeProjects(url,handler) {
   });
 }
 
-console.log("Generating URLs")
+console.log("Beginning project scrape at index " + startIndex)
 var queries = generateQueries();
 
-scrapeBase(queries);
+scrapeBase(queries.slice(startIndex),0);
 
 

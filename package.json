@@ -1,0 +1,10 @@
+{
+  "name": "kickdata-scraper",
+  "version": "0.1.0",
+  "dependencies" : {
+    "request"   :  "2.21",
+    "jquery"    :  "1.8",
+    "sleep"     :  "1.1",
+    "underscore":  "1.4"    
+  }
+}

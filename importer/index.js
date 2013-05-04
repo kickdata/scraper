@@ -9,6 +9,11 @@ mongoose.connect('mongodb://localhost/kickdata');
 
 var dataDir = 'data'
 
+if(process.argv[2]) {
+  dataDir = process.argv[2];
+  console.log('Datadir: ' + dataDir);
+}
+
 var pledgeSchema = new mongoose.Schema({ pledge: String, backers_count: Number, unit: String });
 var backerSchema = new mongoose.Schema({ name: String, location: String, profile: String });
 

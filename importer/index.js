@@ -1,6 +1,7 @@
 var _ = require('underscore');
 var $ = require('jquery');
 var fs = require('fs');
+var path = require('path');
 var moment = require('moment');
 var mongoose = require('mongoose');
 
@@ -9,6 +10,7 @@ mongoose.connect('mongodb://localhost/kickdata');
 var dataDir = 'data'
 
 var pledgeSchema = new mongoose.Schema({ pledge: String, backers_count: Number, unit: String });
+var backerSchema = new mongoose.Schema({ name: String, location: String, profile: String });
 
 var Project = mongoose.model('Project', { 
   title: String,
@@ -25,12 +27,7 @@ var Project = mongoose.model('Project', {
     currency: String
   },
   status: Array,
-  backers: [
-    {
-      name: String, 
-      location: String
-    }
-  ],
+  backers: [backerSchema],
   pledges: [pledgeSchema]
 });
 
@@ -58,17 +55,17 @@ function getPledges(data) {
     p.pledge=$('h5', this).text().substring(8).split(' ')[0];
     p.unit = $('h5', this).text().substring(7, 8);
     p.backers_count= $('.num-backers', this).text().trim().split(' ')[0]; 
-    console.log(JSON.stringify(p));
     return p;
   })
 }
 
 fs.readdir(dataDir, function(err,files) {
-  var htmlFiles = _.reject(files,function(f) { return !f.endsWith('.html')} )
+  var htmlFiles = _.reject(files,function(f) { return !f.endsWith('.html') || f.endsWith('__backers.html')} )
   _.each(htmlFiles,function(file) {
-    var path = dataDir + "/" + file
+    var detailPageFile = dataDir + "/" + file
+
     console.log("Importing " + file)
-    fs.readFile(path, {'encoding': 'utf-8'}, function (err, data) {
+    fs.readFile(detailPageFile, {'encoding': 'utf-8'}, function (err, data) {
       var data = $(data)
       var project = new Project({ 
         title: $('#title a',data).text(),
@@ -91,13 +88,20 @@ fs.readdir(dataDir, function(err,files) {
         project.pledges.push(item);
       });
 
-      //TODO read backers from sub-page
-      // backers: getBackers(data),
+      fs.readFile(detailPageFile.replace(path.extname(detailPageFile), '') + '__backers.html', {'encoding': 'utf-8'}, function(err, data) {
+          var data = $(data);
 
-      project.save(function (err) {
-        if (err) console.log('Error ' + err);
+          _.each(getBackers(data), function(item) {
+            console.log(item);
+            project.backers.push(item);
+          });
+
+          project.save(function (err) {
+            if (err) console.log('Error ' + err);
+          });
+          console.log("Done")
       });
-      console.log("Done")
+      
       return true
     })
   });

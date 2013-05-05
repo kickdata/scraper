@@ -66,13 +66,13 @@ function getPledges(data) {
   })
 }
 
-fs.readdir(dataDir, function(err,files) {
-  var htmlFiles = _.reject(files,function(f) { return !f.endsWith('.html') || f.endsWith('__backers.html')} )
-  _.each(htmlFiles,function(file) {
-    var detailPageFile = dataDir + "/" + file
-
-    fs.readFile(detailPageFile, {'encoding': 'utf-8'}, function (err, data) {
-      console.log("Importing " + file)
+function readDetails(detailPages) {
+   if (detailPages.length <= 0) {
+    return;
+   }
+   detailPageFile = _.first(detailPages);
+   fs.readFile(detailPageFile, {'encoding': 'utf-8'}, function (err, data) {
+      console.log("Importing " + detailPageFile)
       var data = $(data)
       var project = new Project({ 
         title: $('#title a',data).text(),
@@ -107,11 +107,17 @@ fs.readdir(dataDir, function(err,files) {
             if (err) console.log('Error ' + err);
           });
           console.log("Done")
+          readDetails(detailPages.slice(1))
       });
       
       return true
-    })
-  });
+    })  
+}
+
+fs.readdir(dataDir, function(err,files) {
+  var htmlFiles = _.reject(files,function(f) { return !f.endsWith('.html') || f.endsWith('__backers.html')} )
+  var detailPages = _.map(htmlFiles,function(file) { return dataDir + "/" + file; });
+  readDetails(detailPages);
 })
 
 mongoose.disconnect()

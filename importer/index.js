@@ -31,7 +31,7 @@ var Project = mongoose.model('Project', {
     pledged: Number,
     currency: String
   },
-  status: Array,
+  status: String,
   backers: [backerSchema],
   pledges: [pledgeSchema]
 });
@@ -41,10 +41,21 @@ String.prototype.endsWith = function(suffix) {
 };
 
 function getProjectStatus(data) {
-  return _.map(JSON.parse($('div[data-evaluation="true"]', data).has('div').attr('data-conditions')), function(x) {
-    console.log(x.state);
-    return x.state;
-  });
+  var selector = $('#main_content', data).attr('class');
+  var state = 'unknown';
+
+  if(selector.indexOf('-state-successful') > 0) {
+    state = 'successful';
+  }
+
+  if(selector.indexOf('-state-live') > 0) {
+    state = 'live';
+  }
+
+  if(selector.indexOf('-state-failed') > 0) {
+    state = 'failed';
+  }
+  return state;
 }
 
 function getBackers(data) {
@@ -112,8 +123,6 @@ function readDetails(detailPages) {
           });
 
       });
-      
-      return true
     })  
 }
 

@@ -41,7 +41,8 @@ String.prototype.endsWith = function(suffix) {
 };
 
 function getProjectStatus(data) {
-  return _.map(JSON.parse($('#moneyraised div[data-evaluation="true"]', data).has('#banner').attr('data-conditions')), function(x) {
+  return _.map(JSON.parse($('div[data-evaluation="true"]', data).has('div').attr('data-conditions')), function(x) {
+    console.log(x.state);
     return x.state;
   });
 }
@@ -68,6 +69,7 @@ function getPledges(data) {
 
 function readDetails(detailPages) {
    if (detailPages.length <= 0) {
+    mongoose.disconnect()
     return;
    }
    detailPageFile = _.first(detailPages);
@@ -105,9 +107,10 @@ function readDetails(detailPages) {
 
           project.save(function (err) {
             if (err) console.log('Error ' + err);
+            console.log("Done")
+            readDetails(detailPages.slice(1))
           });
-          console.log("Done")
-          readDetails(detailPages.slice(1))
+
       });
       
       return true
@@ -120,4 +123,3 @@ fs.readdir(dataDir, function(err,files) {
   readDetails(detailPages);
 })
 
-mongoose.disconnect()

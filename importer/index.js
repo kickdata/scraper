@@ -71,8 +71,8 @@ fs.readdir(dataDir, function(err,files) {
   _.each(htmlFiles,function(file) {
     var detailPageFile = dataDir + "/" + file
 
-    console.log("Importing " + file)
     fs.readFile(detailPageFile, {'encoding': 'utf-8'}, function (err, data) {
+      console.log("Importing " + file)
       var data = $(data)
       var project = new Project({ 
         title: $('#title a',data).text(),

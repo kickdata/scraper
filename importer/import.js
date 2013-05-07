@@ -94,7 +94,7 @@ process.on('message', function(m) {
 
   var projects = [];
 
-  console.log('Batch ' + m.index);
+  console.log('Batch ' + m.index + '/' + m.totalChunks);
 
   async.eachSeries(m.chunk, function(item, callback) {
     parseHtml(item, function(obj) {
@@ -107,7 +107,6 @@ process.on('message', function(m) {
   }, function() {
     importProjects(projects, function() {
       process.send({status: 'success'});
-      process.disconnect();
     });
   });
 });

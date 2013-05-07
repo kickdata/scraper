@@ -31,34 +31,36 @@ function getHtmlFiles(dataDir, callback) {
     htmlFiles = _.map(htmlFiles, function(file) {
       return path.join(dataDir,file);
     });
-    callback(htmlFiles.slice(0, 200));
+    callback(htmlFiles);
   });
 }
 
 function createChunks(files, callback) {
-  _.each(files.chunk(100), function(part, index) {
-    callback(part, index);
+  var chunks = files.chunk(100);
+  _.each(chunks, function(part, index) {
+    callback(part, index, chunks.length);
   });
 }
 
-function importProject(chunk, index, callback) {
+function importProject(chunk, index, totalChunks, callback) {
   
   var n = cp.fork(__dirname + '/import.js');
-  n.send({ chunk: chunk, index: index });
+  n.send({ chunk: chunk, index: index, totalChunks: totalChunks });
 
   n.on('message', function(m) {
-    console.log('PARENT got message:', m);
+    n.kill();
     callback();
   });
+
 }
 
 var tasks = [];
 
 getHtmlFiles(dataDir, function(files) {
 
-  createChunks(files, function(chunk, index) {
+  createChunks(files, function(chunk, index, totalChunks) {
        tasks.push(function(callback) {
-          importProject(chunk, index, function() {
+          importProject(chunk, index, totalChunks, function() {
             callback();
           });
        });

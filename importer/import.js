@@ -19,6 +19,10 @@ function getProjectStatus(data) {
   if(selector.indexOf('-state-failed') > 0) {
     state = 'failed';
   }
+
+  if(selector.indexOf('-state-canceled') > 0) {
+    state = 'canceled';
+  }
   return state;
 }
 

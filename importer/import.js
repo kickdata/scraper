@@ -61,6 +61,7 @@ function parseHtml(file, callback) {
       start: moment($('.posted', data).text().trim().substring(10)).toJSON(),
       end: moment($('.ends', data).text().trim().substring(10)).toJSON(),
       last_update: moment().toJSON(),
+      url: $('meta[property="og:url"]', data).attr('content'),
       pledged: {
         goal: $('#pledged', data).attr('data-goal'),
         percent_raised: $('#pledged', data).attr('data-percent-raised'),
